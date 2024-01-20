@@ -106,7 +106,10 @@ class Llama:
         ), f"Loading a checkpoint for MP={len(checkpoints)} but world size is {model_parallel_size}"
         ckpt_path = checkpoints[get_model_parallel_rank()]
         checkpoint = torch.load(ckpt_path, map_location="cpu")
-        with open(Path(ckpt_dir) / "params.json", "r") as f:
+        for key, value in checkpoint.items():
+            if isinstance(value, torch.Tensor):
+                checkpoint[key] = checkpoint[key].to(dtype=torch.float16)
+        with open(Path(".") / "params.json", "r") as f:
             params = json.loads(f.read())
 
         model_args: ModelArgs = ModelArgs(
