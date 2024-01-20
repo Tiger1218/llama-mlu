@@ -7,7 +7,6 @@ from typing import Optional, Tuple
 
 import fairscale.nn.model_parallel.initialize as fs_init
 import torch
-import torch_mlu
 import torch.nn.functional as F
 from fairscale.nn.model_parallel.layers import (
     ColumnParallelLinear,
@@ -241,7 +240,7 @@ class Attention(nn.Module):
                 self.n_local_kv_heads,
                 self.head_dim,
             )
-        ).mlu()
+        ).cuda()
         self.cache_v = torch.zeros(
             (
                 args.max_batch_size,
@@ -249,7 +248,7 @@ class Attention(nn.Module):
                 self.n_local_kv_heads,
                 self.head_dim,
             )
-        ).mlu()
+        ).cuda()
 
     def forward(
         self,
